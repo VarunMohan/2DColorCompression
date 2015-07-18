@@ -1,49 +1,5 @@
-import httplib2
-import os
-
-from apiclient import discovery
-import oauth2client
-from oauth2client import client
-from oauth2client import tools
-
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
-
-SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly'
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Drive API Quickstart'
-
-
-def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
-
-    Returns:
-        Credentials, the obtained credential.
-    """
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    if not os.path.exists(credential_dir):
-        os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'drive-quickstart.json')
-
-    store = oauth2client.file.Storage(credential_path)
-    credentials = store.get()
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatability with Python 2.6
-            credentials = tools.run(flow, store)
-        print 'Storing credentials to ' + credential_path
-    return credentials
+from utils.credentials import *
+from utils.nav_utils import *
 
 def main():
     """Shows basic usage of the Google Drive API.
@@ -55,14 +11,15 @@ def main():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v2', http=http)
 
-    results = service.files().list(maxResults=10).execute()
-    items = results.get('items', [])
-    if not items:
-        print 'No files found.'
-    else:
-        print 'Files:'
-        for item in items:
-            print '{0} ({1}) {2}'.format(item['mimeType'], item['title'], item['id'])
+    items = ls(service)
+    folders = [x for x in items if is_folder(x)]
+    docs = [x for x in items if not is_folder(x)]
+    print("Folders:")
+    for folder in folders:
+        print(folder['title'])
+    print("Docs:")
+    for doc in docs:
+        print(doc['title'])
 
 if __name__ == '__main__':
     main()
