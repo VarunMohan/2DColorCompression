@@ -15,7 +15,7 @@ def change_dir(service, pathname):
     if pathname == "~":
         reset_home()
     else:
-        ret_val = cd(service, pathname)
+        ret_val = getFolder(service, pathname)
         if not ret_val:
             print("Not a valid path")
     print "Current Path: ", pwd()
@@ -55,6 +55,8 @@ if __name__ == '__main__':
     if command_arg == 'ls':
         list_files(service)
     if command_arg == 'cd':
+        if sys.argv[2][0] == '.' :
+            sys.argv[2] = sys.argv[2][1:]
         change_dir(service, sys.argv[2])
     if command_arg == 'more':
         more_file(service, sys.argv[2])

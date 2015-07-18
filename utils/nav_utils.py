@@ -125,7 +125,9 @@ def find_recursive(service, pattern, folder, path):
     return matches
 
 def find(service, folder, pattern):
-    return find_recursive(service, pattern, getFile(service, folder), pwd())
+    getFolderPartial(service, folder)
+    return find_recursive(service, pattern, getFile(service, folder.split("/")[-1]), pwd())
+    reset_home()
 
 def read(service, f):
     contents = ""
@@ -152,3 +154,36 @@ def getFile(service, fname):
         if (file['title'] == fname):
             return file
     return None
+
+def getFolder(service, path):
+    folders = path.split("/")
+    if (len(folders)==0):
+        return True
+    if (len(folders)==1):
+        if (folders[0] == '~') :
+            reset_home()
+        return cd(service, folders[0])
+    for folder in folders:
+        if (folder == '~'):
+            reset_home()
+        elif (not cd(service, folder)):
+            return False
+    return True
+
+def getFolderPartial(service, path):
+    folders = path.split("/")[:-1]
+    if (len(folders)==0):
+        return True
+    if (len(folders)==1):
+        if (folders[0] == '~') :
+            reset_home()
+        return cd(service, folders[0])
+    for folder in folders:
+        if (folder == '~'):
+            reset_home()
+        elif (not cd(service, folder)):
+            return False
+    return True
+
+
+
