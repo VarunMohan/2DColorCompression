@@ -1,7 +1,7 @@
 import os
 from sys import stdin, stdout
 
-from command_line import authenticate, cd_command, find_command, ls_command, more_command, pwd_command, rm_command
+from command_line import CommandLineException, authenticate, cd_command, find_command, ls_command, more_command, pwd_command, rm_command
 
 command_to_func = {
     'cd': cd_command,
@@ -25,8 +25,11 @@ while True:
         break
     elif command in command_to_func:
         func = command_to_func[command]
-        func(service, argv[1:])
+        try:
+            func(service, argv[1:])
+        except CommandLineException as e:
+            stdout.write('Error: {0}'.format(e) + os.linesep)
     else:
-        print 'Error: Unrecognized command: {0}'.format(' '.join(argv))
+        stdout.write('Error: Unrecognized command: {0}'.format(' '.join(argv)) + os.linesep)
 
 stdout.write('Bye' + os.linesep)

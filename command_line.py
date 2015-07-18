@@ -2,6 +2,9 @@ import sys
 from utils.credentials import *
 from utils.nav_utils import *
 
+class CommandLineException(Exception):
+    pass
+
 def authenticate():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -51,7 +54,7 @@ def find_file(service, path, pattern):
 
 def cd_command(service, argv):
     if len(argv) > 1:
-        raise Exception('Too many arguments')
+        raise CommandLineException('Too many arguments')
     if len(argv) == 0 or argv[0] == '~':
         pathname = None
     elif argv[0][0] == '.':
@@ -62,47 +65,47 @@ def cd_command(service, argv):
 
 def find_command(service, argv):
     if len(argv) < 2:
-        raise Exception('Too few arguments')
+        raise CommandLineException('Too few arguments')
     if len(argv) > 2:
-        raise Exception('Too many arguments')
+        raise CommandLineException('Too many arguments')
     find_file(service, argv[0], argv[1])
 
 def ls_command(service, argv):
     if len(argv) > 0:
-        raise Exception('Too many arguments')
+        raise CommandLineException('Too many arguments')
     list_files(service)
 
 def more_command(service, argv):
     if len(argv) < 1:
-        raise Exception('Too few arguments')
+        raise CommandLineException('Too few arguments')
     if len(argv) > 1:
-        raise Exception('Too many arguments')
+        raise CommandLineException('Too many arguments')
     more_file(service, argv[0])
 
 def pwd_command(service, argv):
     if len(argv) > 0:
-        raise Exception('Too many arguments')
+        raise CommandLineException('Too many arguments')
     print pwd()
 
 def rm_command(service, argv):
+    if len(argv) == 0:
+        raise CommandLineException('Too few arguments')
     if argv[0] == '-rf':
-        if len(argv) < 2:
-            raise Exception('Too few arguments')
+        if len(argv) == 1:
+            raise CommandLineException('Too few arguments')
         if len(argv) > 2:
-             raise Exception('Too many arguments')
+             raise CommandLineException('Too many arguments')
         delete_file(service, argv[1])
     else:
-        if len(argv) < 1:
-            raise Exception('Too few arguments')
         if len(argv) > 1:
-             raise Exception('Too many arguments')
+             raise CommandLineException('Too many arguments')
         delete_file(service, argv[0])
 
 def upload_command(service, argv):
     if len(argv) < 1:
-        raise Exception('Too few arguments')
+        raise CommandLineException('Too few arguments')
     if len(argv) > 2:
-        raise Exception('Too many arguments')
+        raise CommandLineException('Too many arguments')
     if len(argv) == 1:
         folder = None
     elif argv[1][0] == '.':
@@ -125,11 +128,11 @@ command_to_func = {
 ##### ADD HELP MENU
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        raise Exception('Too few arguments')
+        raise CommandLineException('Too few arguments')
     service = authenticate()
     command = sys.argv[1]
     if command in command_to_func:
         func = command_to_func[command]
         func(service, sys.argv[2:])
     else:
-        raise Exception('Unrecognized command: {0}'.format(' '.join(sys.argv[1:])))
+        raise CommandLineException('Unrecognized command: {0}'.format(' '.join(sys.argv[1:])))
