@@ -1,2 +1,2 @@
-# 2DColorCompression
+# Command-Drive
 LinkedIn Hackathon Project
