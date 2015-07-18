@@ -6,13 +6,8 @@ import oauth2client
 from oauth2client import client
 from oauth2client import tools
 
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
 
-SCOPES = 'https://www.googleapis.com/auth/drive'
+SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Quickstart'
 

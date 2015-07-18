@@ -1,24 +1,31 @@
-from utils.credentials import *
-from utils.nav_utils import *
+import argparse
+#from utils.credentials import *
+#from utils.nav_utils import *
 
-def main():
-    """Shows basic usage of the Google Drive API.
 
-    Creates a Google Drive API service object and outputs the names and IDs
-    for up to 10 files.
-    """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('drive', 'v2', http=http)
+#def main():
+#    credentials = get_credentials()
+#    http = credentials.authorize(httplib2.Http())
+#    service = discovery.build('drive', 'v2', http=http)
 
-    reset_home()
+    #reset_home()
     #print cd(service, "Text Excerpts")
 
-    print upload_file(service, "max", None, "file")
+    #print upload_file(service, "max", None, "file")
     #items = ls(service)
     #folders = [x for x in items if is_folder(x)]
     #docs = [x for x in items if not is_folder(x)]
     #print("Folders:")
 
 if __name__ == '__main__':
-    main()
+    """parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                        help='an integer for the accumulator')
+    parser.add_argument('--sum', dest='accumulate', action='store_const',
+                        const=sum, default=max,
+                        help='sum the integers (default: find the max)')
+
+    args = parser.parse_args()
+    print args.accumulate(args.integers)"""
+
+    #main()
