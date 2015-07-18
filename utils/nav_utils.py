@@ -12,6 +12,8 @@ def get_cur_dir_id():
     f = open(dir_id_file)
     val = f.read()
     f.close()
+    if val == '':
+        return None
     return val
 
 def update_cur_dir_id(new_id):
@@ -83,7 +85,6 @@ def lsfolder(service, folder):
 
 
 def cd(service, folder):
-    cur_id = get_cur_dir_id()
     results = ls (service)
     new_id = None
     for f in results:
