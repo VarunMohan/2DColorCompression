@@ -14,13 +14,24 @@ def main():
     items = ls(service)
     folders = [x for x in items if is_folder(x)]
     docs = [x for x in items if not is_folder(x)]
-    print("Folders:")
+    #print("Folders:")
     for folder in folders:
-        print(folder['title'])
-    print("Docs:")
+        pass
+        #print(folder['title'])
+    #print("Docs:")
     for doc in docs:
-        print(doc['title'])
-        #print(read(service, doc))
+        print doc['title']
+    for doc in docs:
+        if doc['id'] == "12DCkdFVRNSTTeFQOgVRODq-wcqp_gqjpeQJD8hKFqo0":
+            delete(service, doc)
+        #if doc['id'] == "0Bza7xsC4hvoAc3RhcnRlcl9maWxl":
+        #    print(read(service, doc))
+        #print(doc['title'])
+        #read(service, doc)
+        #print(doc['id'])
+        #print doc['title'], doc['id']
+    for doc in docs:
+        print doc['title']
 
 if __name__ == '__main__':
     main()
