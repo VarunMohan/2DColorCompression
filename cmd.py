@@ -44,6 +44,8 @@ def find_file(service, path, pattern):
         path, filename = result[0], result[1]
         print(path)
 
+
+##### ADD HELP MENU
 if __name__ == '__main__':
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -67,3 +69,11 @@ if __name__ == '__main__':
             delete_file(service, sys.argv[2])
     if command_arg == 'find':
         find_file(service, sys.argv[2], sys.argv[3])
+    if command_arg == 'upload':
+        if sys.argv[3][0] == '.' :
+            sys.argv[3] = sys.argv[3][1:]
+        folder = sys.argv[3]
+        getFolderPartial(service, folder)
+        upload_file(service, sys.argv[2], getFile(service, folder.split("/")[-1]), "file")
+    if command_arg == 'pwd':
+        print pwd()
