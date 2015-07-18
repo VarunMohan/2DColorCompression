@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions
 # sudo pip install selenium
 # https://sites.google.com/a/chromium.org/chromedriver/home
 
+DOCUMENT_URL_FORMAT = 'https://docs.google.com/document/d/{0}/edit'
 EMAIL_ID = 'gdrivecommandline'
 FOLDER_URL_FORMAT = 'https://drive.google.com/drive/folders/{0}'
 MAX_WAIT_TIME_SECONDS = 10
@@ -28,6 +29,13 @@ def login(driver):
     password_box.send_keys(PASSWORD)
     password_box.submit()
     wait_until_load(driver)
+
+def browse_to_document(driver, document_id):
+    if document_id is None:
+        url = ROOT_URL
+    else:
+        url = DOCUMENT_URL_FORMAT.format(document_id)
+    driver.get(url)
 
 def browse_to_folder(driver, folder_id):
     if folder_id is None:

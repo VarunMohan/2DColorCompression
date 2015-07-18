@@ -102,12 +102,10 @@ def rm_command(service, argv):
         delete_file(service, argv[0])
 
 def upload_command(service, argv):
-    if len(argv) < 1:
+    if len(argv) < 2:
         raise CommandLineException('Too few arguments')
     if len(argv) > 2:
         raise CommandLineException('Too many arguments')
-    if len(argv) == 1:
-        folder = None
     elif argv[1][0] == '.':
         folder = argv[1][1:]
     else:
