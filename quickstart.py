@@ -62,7 +62,7 @@ def main():
     else:
         print 'Files:'
         for item in items:
-            print '{0} ({1})'.format(item['title'], item['id'])
+            print '{0} ({1}) {2}'.format(item['mimeType'], item['title'], item['id'])
 
 if __name__ == '__main__':
     main()
