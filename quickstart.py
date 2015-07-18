@@ -20,6 +20,7 @@ def main():
     print("Docs:")
     for doc in docs:
         print(doc['title'])
+        print(read(service, doc))
 
 if __name__ == '__main__':
     main()
