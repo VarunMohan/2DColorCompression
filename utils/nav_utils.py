@@ -6,6 +6,7 @@ from apiclient.http import MediaFileUpload
 current_directory = "/"
 path_file = os.path.expanduser('~') + "/.current_dir"
 dir_id_file = os.path.expanduser('~') + "/.google_path_id"
+base_mimetype = "application/vnd.google-apps."
 
 def get_cur_dir_id():
     f = open(dir_id_file)
@@ -26,6 +27,34 @@ def update_pwd(new_dir):
 def reset_home():
     update_pwd("")
     update_cur_dir_id("")
+
+def upload_file(service, filename, folder, filetype):
+    mimetype = base_mimetype + filetype
+
+    temp = True
+
+    f = open(filename, "r")
+    if (not f.read()) :
+        temp = False
+
+    media_body = MediaFileUpload(filename, mimetype=mimetype, resumable=True)
+
+    body = {
+        'title': filename,
+        'description': '',
+        'mimeType': mimetype
+    }
+
+    if folder :
+        body['parents'] = [{'id': folder['id']}]
+
+    try:
+        file = service.files().insert(body = body, media_body = media_body).execute()
+        return True
+    except errors.HttpError, error:
+        print error
+        return False
+
 
 def ls(service, limit=100):
     cur_id = get_cur_dir_id()

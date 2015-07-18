@@ -12,14 +12,13 @@ def main():
     service = discovery.build('drive', 'v2', http=http)
 
     reset_home()
-    print(cd(service, "Text Excerpts"))
-    print(cd(service, "Such Recursion"))
+    #print cd(service, "Text Excerpts")
 
-    items = ls(service)
-    folders = [x for x in items if is_folder(x)]
-    docs = [x for x in items if not is_folder(x)]
-
-    print(docs)
+    print upload_file(service, "max", None, "file")
+    #items = ls(service)
+    #folders = [x for x in items if is_folder(x)]
+    #docs = [x for x in items if not is_folder(x)]
+    #print("Folders:")
 
 if __name__ == '__main__':
     main()
