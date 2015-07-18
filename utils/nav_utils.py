@@ -37,28 +37,22 @@ def reset_home():
 def upload_file(service, filename, folder, filetype):
     mimetype = base_mimetype + filetype
 
-    temp = True
-
-    f = open(filename, "r")
-    if (not f.read()) :
-        temp = False
-
     media_body = MediaFileUpload(filename, mimetype=mimetype, resumable=True)
 
     body = {
         'title': filename,
         'description': '',
-        'mimeType': mimetype
+        'mimeType': 'text/plain'
     }
 
-    if folder :
+    if folder:
         body['parents'] = [{'id': folder['id']}]
 
     try:
-        file = service.files().insert(body = body, media_body = media_body).execute()
+        f = service.files().insert(body=body, media_body=media_body).execute()
         return True
     except errors.HttpError, error:
-        print error
+        print 'An error occurred: %s' % error
         return False
 
 
@@ -92,9 +86,9 @@ def cd(service, folder):
     cur_id = get_cur_dir_id()
     results = ls (service)
     new_id = None
-    for file in results:
-        if file['title'] == folder:
-            new_id = file['id']
+    for f in results:
+        if f['title'] == folder:
+            new_id = f['id']
     if not new_id:
         return False
     update_pwd(pwd() + "/" + folder)

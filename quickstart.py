@@ -15,7 +15,6 @@ import argparse
     #items = ls(service)
     #folders = [x for x in items if is_folder(x)]
     #docs = [x for x in items if not is_folder(x)]
-    #print("Folders:")
 
 if __name__ == '__main__':
     """parser = argparse.ArgumentParser(description='Process some integers.')
