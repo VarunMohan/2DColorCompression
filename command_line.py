@@ -44,70 +44,90 @@ def find_file(service, path, pattern):
         path, filename = result[0], result[1]
         print(path)
 
+def ls_command(argv):
+    if len(argv) > 0:
+        raise Exception('Too many arguments')
+    list_files(service)
+
+def cd_command(argv):
+    if len(argv) > 1:
+        raise Exception('Too many arguments')
+    if len(argv) == 0 or argv[0] == '~':
+        pathname = None
+    elif argv[0][0] == '.':
+        pathname = argv[0][1:]
+    else:
+        pathname = argv[0]
+    change_dir(service, pathname)
+
+def more_command(argv):
+    if len(argv) < 1:
+        raise Exception('Too few arguments')
+    if len(argv) > 1:
+        raise Exception('Too many arguments')
+    more_file(service, argv[0])
+
+def rm_command(argv):
+    if argv[0] == '-rf':
+        if len(argv) < 2:
+            raise Exception('Too few arguments')
+        if len(argv) > 2:
+             raise Exception('Too many arguments')
+        delete_file(service, argv[1])
+    else:
+        if len(argv) < 1:
+            raise Exception('Too few arguments')
+        if len(argv) > 1:
+             raise Exception('Too many arguments')
+        delete_file(service, argv[0])
+
+def find_command(argv):
+    if len(argv) < 2:
+        raise Exception('Too few arguments')
+    if len(argv) > 2:
+        raise Exception('Too many arguments')
+    find_file(service, argv[0], argv[1])
+
+def upload_command(argv):
+    if len(argv) < 1:
+        raise Exception('Too few arguments')
+    if len(argv) > 2:
+        raise Exception('Too many arguments')
+    if len(argv) == 1:
+        folder = None
+    elif argv[1][0] == '.':
+        folder = argv[1][1:]
+    else:
+        folder = argv[1]
+    getFolderPartial(service, folder)
+    upload_file(service, argv[0], getFile(service, folder.split("/")[-1]), "file")
+
+def pwd_command(argv):
+    if len(argv) > 0:
+        raise Exception('Too many arguments')
+    print pwd()
 
 ##### ADD HELP MENU
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        raise Exception('Too few arguments')
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v2', http=http)
-    if len(sys.argv) < 2:
-        raise Exception('Too few arguments')
     command_arg = sys.argv[1]
     if command_arg == 'ls':
-        if len(sys.argv) > 2:
-            raise Exception('Too many arguments')
-        list_files(service)
+        ls_command(sys.argv[2:])
     elif command_arg == 'cd':
-        if len(sys.argv) > 3:
-            raise Exception('Too many arguments')
-        if len(sys.argv) == 2 or sys.argv[2] == '~':
-            pathname = None
-        elif sys.argv[2][0] == '.':
-            pathname = sys.argv[2][1:]
-        else:
-            pathname = sys.argv[2]
-        change_dir(service, pathname)
+        cd_command(sys.argv[2:])
     elif command_arg == 'more':
-        if len(sys.argv) < 3:
-            raise Exception('Too few arguments')
-        if len(sys.argv) > 3:
-            raise Exception('Too many arguments')
-        more_file(service, sys.argv[2])
+        more_command(sys.argv[2:])
     elif command_arg == 'rm':
-        if (sys.argv[2]=='-rf') :
-            if len(sys.argv) < 4:
-                raise Exception('Too few arguments')
-            if len(sys.argv) > 4:
-                 raise Exception('Too many arguments')
-            delete_file(service, sys.argv[3])
-        else:
-            if len(sys.argv) < 3:
-                raise Exception('Too few arguments')
-            if len(sys.argv) > 3:
-                 raise Exception('Too many arguments')
-            delete_file(service, sys.argv[2])
+        more_command(sys.argv[2:])
     elif command_arg == 'find':
-        if len(sys.argv) < 4:
-            raise Exception('Too few arguments')
-        if len(sys.argv) > 4:
-            raise Exception('Too many arguments')
-        find_file(service, sys.argv[2], sys.argv[3])
+        find_command(sys.argv[2:])
     elif command_arg == 'upload':
-        if len(sys.argv) < 3:
-            raise Exception('Too few arguments')
-        if len(sys.argv) > 4:
-            raise Exception('Too many arguments')
-        if len(sys.argv) == 3:
-            folder = None
-        elif sys.argv[3][0] == '.':
-            folder = sys.argv[3][1:]
-        else:
-            folder = sys.argv[3]
-        getFolderPartial(service, folder)
-        upload_file(service, sys.argv[2], getFile(service, folder.split("/")[-1]), "file")
+        upload_command(sys.argv[2:])
     elif command_arg == 'pwd':
-        if len(sys.argv) > 2:
-            raise Exception('Too many arguments')
-        print pwd()
+        pwd_command(sys.argv[2:])
     else:
         raise Exception('Unrecognized options: {0}'.format(' '.join(sys.argv[1:])))
