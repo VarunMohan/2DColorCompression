@@ -87,7 +87,7 @@ def cd(service, folder):
     results = ls (service)
     new_id = None
     for f in results:
-        if f['title'] == folder:
+        if f['title'] == folder and is_folder(f):
             new_id = f['id']
     if not new_id:
         return False
