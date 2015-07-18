@@ -10,7 +10,10 @@ def ls(service, limit=100):
     return results.get('items', [])
 
 def is_folder(f):
-    return "application/vnd.google-apps.folder" in f['mimeType']
+    return "application/vnd.google-apps.folder" == f['mimeType']
+
+def is_gdoc(f):
+    return "application/vnd.google-apps.document" == f['mimeType']
 
 def delete(service, f):
     try:
@@ -22,7 +25,16 @@ def delete(service, f):
 def read(service, f):
     contents = ""
     try:
-        contents = service.files().get_media(fileId=f['id']).execute()
+        files = service.files()
+        fileId = f['id']
+        if is_gdoc(f):
+            download_url = files.get(fileId=fileId).execute()['exportLinks']['text/plain']
+            resp, contents = service._http.request(download_url)
+            if resp.status != 200:
+                print 'An error occurred: %s' % error
+        else:
+            contents = files.get_media(fileId=fileId).execute()
+        print 'Contents:', contents
     except errors.HttpError, error:
         print 'An error occurred: %s' % error
     return contents

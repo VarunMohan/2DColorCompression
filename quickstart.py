@@ -20,8 +20,9 @@ def main():
         #print(folder['title'])
     #print("Docs:")
     for doc in docs:
-        print doc['title']
+        print 'Title:', doc['title']
     for doc in docs:
+        read(service, doc)
         if doc['id'] == "12DCkdFVRNSTTeFQOgVRODq-wcqp_gqjpeQJD8hKFqo0":
             delete(service, doc)
         #if doc['id'] == "0Bza7xsC4hvoAc3RhcnRlcl9maWxl":
