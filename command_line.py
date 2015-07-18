@@ -2,6 +2,11 @@ import sys
 from utils.credentials import *
 from utils.nav_utils import *
 
+def authenticate():
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    return discovery.build('drive', 'v2', http=http)
+
 def list_files(service):
     files = ls(service)
     directories = [x for x in files if is_folder(x)]
@@ -44,12 +49,7 @@ def find_file(service, path, pattern):
         path, filename = result[0], result[1]
         print(path)
 
-def ls_command(argv):
-    if len(argv) > 0:
-        raise Exception('Too many arguments')
-    list_files(service)
-
-def cd_command(argv):
+def cd_command(service, argv):
     if len(argv) > 1:
         raise Exception('Too many arguments')
     if len(argv) == 0 or argv[0] == '~':
@@ -60,14 +60,31 @@ def cd_command(argv):
         pathname = argv[0]
     change_dir(service, pathname)
 
-def more_command(argv):
+def find_command(service, argv):
+    if len(argv) < 2:
+        raise Exception('Too few arguments')
+    if len(argv) > 2:
+        raise Exception('Too many arguments')
+    find_file(service, argv[0], argv[1])
+
+def ls_command(service, argv):
+    if len(argv) > 0:
+        raise Exception('Too many arguments')
+    list_files(service)
+
+def more_command(service, argv):
     if len(argv) < 1:
         raise Exception('Too few arguments')
     if len(argv) > 1:
         raise Exception('Too many arguments')
     more_file(service, argv[0])
 
-def rm_command(argv):
+def pwd_command(service, argv):
+    if len(argv) > 0:
+        raise Exception('Too many arguments')
+    print pwd()
+
+def rm_command(service, argv):
     if argv[0] == '-rf':
         if len(argv) < 2:
             raise Exception('Too few arguments')
@@ -81,14 +98,7 @@ def rm_command(argv):
              raise Exception('Too many arguments')
         delete_file(service, argv[0])
 
-def find_command(argv):
-    if len(argv) < 2:
-        raise Exception('Too few arguments')
-    if len(argv) > 2:
-        raise Exception('Too many arguments')
-    find_file(service, argv[0], argv[1])
-
-def upload_command(argv):
+def upload_command(service, argv):
     if len(argv) < 1:
         raise Exception('Too few arguments')
     if len(argv) > 2:
@@ -102,32 +112,24 @@ def upload_command(argv):
     getFolderPartial(service, folder)
     upload_file(service, argv[0], getFile(service, folder.split("/")[-1]), "file")
 
-def pwd_command(argv):
-    if len(argv) > 0:
-        raise Exception('Too many arguments')
-    print pwd()
+command_to_func = {
+    'cd': cd_command,
+    'find': find_command,
+    'ls': ls_command,
+    'more': more_command,
+    'pwd': pwd_command,
+    'rm': rm_command,
+    'upload': upload_command,
+}
 
 ##### ADD HELP MENU
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         raise Exception('Too few arguments')
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('drive', 'v2', http=http)
-    command_arg = sys.argv[1]
-    if command_arg == 'ls':
-        ls_command(sys.argv[2:])
-    elif command_arg == 'cd':
-        cd_command(sys.argv[2:])
-    elif command_arg == 'more':
-        more_command(sys.argv[2:])
-    elif command_arg == 'rm':
-        more_command(sys.argv[2:])
-    elif command_arg == 'find':
-        find_command(sys.argv[2:])
-    elif command_arg == 'upload':
-        upload_command(sys.argv[2:])
-    elif command_arg == 'pwd':
-        pwd_command(sys.argv[2:])
+    service = authenticate()
+    command = sys.argv[1]
+    if command in command_to_func:
+        func = command_to_func[command]
+        func(service, sys.argv[2:])
     else:
-        raise Exception('Unrecognized options: {0}'.format(' '.join(sys.argv[1:])))
+        raise Exception('Unrecognized command: {0}'.format(' '.join(sys.argv[1:])))
