@@ -1,2 +1,2 @@
 # Command-Drive
-LinkedIn Hackathon Project
+Project provides command-line control of Google Drive File System. Users can perform operations like <code>cd, pwd, ls, find, more, rm</code> within the Google Drive file structure. In addition, Google Docs can be opened using the <code>open</code> command and quickly exited from command line. Files can also be uploaded and downloaded to your Drive using the interface. All of the movements through the File System and file edits can be simultaneously seen on your personal drive through the use of Selenium WebDriver.
